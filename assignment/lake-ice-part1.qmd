@@ -18,7 +18,9 @@ The data are in a multi-sheet Excel file named `data/lake_ice_off_data.xlsx`. Yo
 For some reason, `read_excel()` does not like relative paths, so we will use the `here` package to locate your project on your computer. First, install the `here` package.  Then, run the `here()` function to get the path to your project.  Using `file.path()` appends the results of `here()` to the location of the data within your project/GitHub repository.
 
 ```{r}
+install.packages("here")
 library(here)
+library(tidyverse)
 file_name <- file.path(here(),"data/lake_ice_off_data.xlsx")
 ```
 
@@ -26,13 +28,14 @@ Now use `read_excel()` to read in `file_name`. Remember that Excel files can hav
 
 ```{r}
 library(readxl)
-
+lake_data <- read_excel(file_name, sheet = "data")
 ```
 
 Now, look at a preview of the data using the `head()` function. The `doy` in `ice_off_doy` stands for "day of the year" and is the day within the year where ice off occurred (January 1 = doy 1).  `did_not_freeze` is a column where 1 = did not freeze and 0 = did freeze.
 
 ```{r}
-
+view(lake_data)
+head(lake_data)
 ```
 
 There should be four columns and \~2703 rows.
@@ -42,7 +45,9 @@ There should be four columns and \~2703 rows.
 We will practice key skills in the module using a focal lake. Use the `filter` function to filter the more extensive data to only contain the data from Lake Sunapee, a lake in New Hampshire. Filter the data `ice_data` by the variable `lake_name` to create a data frame called `sunapee`.
 
 ```{r}
-
+sunapee <- lake_data |> 
+  filter(lake_name == "Sunapee")
+view(sunapee)
 ```
 
 You will be using the `sunapee` data for the rest of the module until Question 11
@@ -58,16 +63,23 @@ Be sure that the title, x-axis, and y-axis labels are clearly labeled.
 **Answer 1:**
 
 ```{r}
-
+ggplot(sunapee, aes(x = year, y = ice_off_doy))+
+  geom_point()+
+  geom_line()+
+  labs(title = "Ice-off Day Lake Sunapee",
+       x = "Year",
+       y = "Ice-off Day")
 ```
 
 # How does ice cover change over time at Lake Sunapee?
+-Based on the graph there is no change in the y direction
 
 We want to model how the ice-off date changes over time. Our approach in this module is to use a linear regression that predicts the ice-off day of year as a function of the year. The `lm` function will estimate the parameters of the DOY = b + m \* YEAR linear regression where b is the intercept and m is the slope.
 
 **Question 2:**
 
 What do you expect the sign (plus, minus, or no change) to be for the slope of the relationship? Why?
+-I would expect it to be negative based on the Earth progressively heating up more and more each year
 
 **Answer 2:**
 
@@ -76,13 +88,14 @@ Use the `lm` function to predict `ice_off_doy` as a function (`~`) of the year f
 Create an object called `fit` that contains the results of the linear model.
 
 ```{r}
-
+fit <- lm(ice_off_doy ~ year, data = sunapee)
+  
 ```
 
 Then, use the function `summary` to explore the result of the `lm` function.
 
 ```{r}
-
+summary(fit)
 ```
 
 The results of your linear model are in an object named `fit`, so you can find the regression coefficients at `fit$coefficients[1]` (the intercept) and `fit$coefficients[2]` (the slope). Confirm that `fit$coefficients[1]` and `fit$coefficients[2]` match the values expected from the summary command you ran above.
@@ -95,6 +108,7 @@ fit$coefficients[2]
 **Question 3:**
 
 What is the direction of the slope? How does this match your expectations from Question 2?
+- The direction of the slope is negative and it matches mt prediction
 
 **Answer 3:**
 
