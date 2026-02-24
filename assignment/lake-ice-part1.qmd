@@ -18,7 +18,7 @@ The data are in a multi-sheet Excel file named `data/lake_ice_off_data.xlsx`. Yo
 For some reason, `read_excel()` does not like relative paths, so we will use the `here` package to locate your project on your computer. First, install the `here` package.  Then, run the `here()` function to get the path to your project.  Using `file.path()` appends the results of `here()` to the location of the data within your project/GitHub repository.
 
 ```{r}
-install.packages("here")
+
 library(here)
 library(tidyverse)
 file_name <- file.path(here(),"data/lake_ice_off_data.xlsx")
