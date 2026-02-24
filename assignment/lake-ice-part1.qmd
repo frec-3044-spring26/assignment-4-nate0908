@@ -203,7 +203,7 @@ A slope value could have a low probability of being 0 (thus we have a strong bel
 **Question 8:**
 
 Based on the slope value, how many more years are needed to pass before the lake has a 1 week change in ice off doy? Do you think this is meaningful? Why?
-
+- Using the equation 7/0.10602 we find that it takes around 66 years for the lake to experience a one week shift in the ice-off day. It is meaningful, but this is also happening over the course of 66 years, which lessens its impact in the short term.
 **Answer 8:**
 
 ## Overall model assessment
@@ -211,6 +211,7 @@ Based on the slope value, how many more years are needed to pass before the lake
 **Question 9:**
 
 How comfortable are you proceeding with using this linear model for additional analysis and prediction? Why? (I am not looking for your gut answer, rather I want you to apply concepts taught in this module to justify your answer)
+- I feel somewhat comfortable. I took Biological Statistics last fall so I am somewhat used to R and what it can do.
 
 **Answer 9:**
 
@@ -219,7 +220,17 @@ Now plot the data for Lake Sunapee (just like above - year on x-axis vs. ice of 
 
 **Answer 10:**
 ```{r}
-
+ggplot(sunapee, aes(x = year, y = ice_off_doy))+
+      geom_line()+
+      geom_point()+
+      geom_abline(
+        intercept = coef(fit)[1],
+        slope = coef(fit)[2],
+        color = "blue")+
+      labs(
+        title = "Ice-Off Day for Lake Sunapee",
+        x = "Year",
+        y = "Ice off Day")
 ```
 
 **Question 11:**
@@ -234,8 +245,15 @@ The goal of this question is to make a forecast of the future ice-off day (with 
 **Answer 11:**
 
 ```{r}
+pred <- coef(fit)[1] + coef(fit)[2] * 2040
+resid <- quantile(sunapee$resid, probs = c(0.05, 0.95))
+lower <- pred + resid[1]
+upper <- pred + resid[2]
+width <- upper - lower
 
+width
 ```
+- Approximately 34 days wide
 
 # Is the ice-off day of the year changing more quickly in more recent years at Lake Sunapee?
 
