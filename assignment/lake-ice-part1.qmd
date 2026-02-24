@@ -266,6 +266,34 @@ Use the skills developed above to evaluate the question "Is the ice-off day of y
 **Answer 12:**
 
 Use a mix of code, figures, and text to present your analysis.  If you want to compare slopes, be sure they are on the same plot.
+```{r}
+SPre1970 <- sunapee |> 
+  filter(year < 1970)
+SPost1970 <- sunapee |> 
+  filter(year >= 1970)
+
+Pre1970 <- lm(ice_off_doy ~ year, data = SPre1970)
+Post1970 <- lm(ice_off_doy ~ year, data = SPost1970)
+summary(Pre1970)
+summary(Post1970)
+
+plot <- ggplot(sunapee, aes(x = year, y = ice_off_doy))+
+              geom_point()+
+              geom_abline(
+                intercept = coef(Pre1970)[1],
+                slope = coef(Pre1970)[2],
+                color = "blue")+
+              geom_abline(
+                intercept = coef(Post1970)[1],
+                slope = coef(Post1970)[2],
+                color = "red")+
+              labs(
+                title = "Lake Sunapee Ice-Off Day (Pre 1970 vs Post 1970)",
+                x = "Year",
+                y = "Ice-Off Day of Year")
+plot
+```
+-Based on the plot, the ice-off day of year is changing more rapidly in recent years
 
 # Rendering and committing
 
